@@ -65,7 +65,8 @@
 
     <script>
 
-        apiKey ='QQQLXZK291FP2Z1O';
+        apiKey ='QQQLXZK291FP2Z1O'; // Max
+        //apiKey ='NPQAZZM6L5260BY2'; // Falk
         
         // autocomplete bei der Suche
         $('#exampleDataList').on('input', function() {
@@ -74,29 +75,20 @@
 
             if($('#exampleDataList').val() != '') {
                 
-                enableSearchInput(false);
-
-                searchStringCompanies = "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=" + $('#exampleDataList').val() + "&apikey=" + apiKey;
-
-                // console.log(searchStringCompanies);
+                //enableSearchInput(false);
 
                 // API Suche nach Unternehmen:
                 // https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=tesco&apikey=demo
                 $.ajax({
-
                     type:"GET", 
-                    url: searchStringCompanies, 
+                    url: "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=" + $('#exampleDataList').val() + "&apikey=" + apiKey,
+                    beforeSend: function(){
+                    },
                     success: function(data) {
 
                         // console.log(data);
 
                         if(data['bestMatches']) {
-
-                            // for(var x = 0; x < data['bestMatches'].length; x++) {
-                            //     let item = data['bestMatches'].to;
-                            //     console.log(item);
-                            //     $("#datalistOptions").append('<option class="searchResultItem" value="' + item['1. symbol'] + " // " + item['2. name'] + '">');
-                            // }
 
                             console.log(data['bestMatches']);
 
@@ -105,7 +97,7 @@
                                 // console.log(item);
                                 //console.log(item['2. name'] + " // " + item['1. symbol']);
                                 
-                                $("#datalistOptions").append('<option class="searchResultItem" value="' + item['1. symbol'] + " // " + item['2. name'] + '">');
+                                $("#datalistOptions").append('<option class="searchResultItem" value="' + item['1. symbol'] + '">' + item['2. name'] + ' // ' + item['4. region'] + '</option>');
 
                             });
 
@@ -118,7 +110,7 @@
                         alert(jqXHR.status);
                     },
                     complete: function(data) {
-                        enableSearchInput(true);
+                        //enableSearchInput(true);
                     },
                     dataType: "json",
                 });
@@ -128,22 +120,30 @@
         });
 
         function enableSearchInput(bol) {
-            // if(bol) {
-            //     $("#exampleDataList").prop('disabled', false);
-            //     $("#exampleDataList").focus();
-            // } else {
-            //     $("#exampleDataList").prop('disabled', true);
-            // }
+            if(bol) {
+                $("#exampleDataList").prop('disabled', false);
+                $("#exampleDataList").focus();
+            } else {
+                $("#exampleDataList").prop('disabled', true);
+            }
         }
 
         function removeAllItemsFromSearchList() {
             /*close all autocomplete lists in the document,
             except the one passed as an argument:*/
-            var x = document.getElementsByClassName("searchResultItem");
-            for (var i = 0; i < x.length; i++) {
-                //x[i].parentNode.removeChild(x[i]);
-                x[i].remove();
-            }
+            // var x = document.getElementsByClassName("searchResultItem");
+            // for (var i = 0; i < x.length; i++) {
+            //     //x[i].parentNode.removeChild(x[i]);
+            //     x[i].remove();
+            // }
+
+            $('#datalistOptions').empty();
+        }
+
+        function loadSymbolData(symbol) {
+
+            alert(symbol);
+
         }
 
         // $.ajax({
