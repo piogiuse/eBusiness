@@ -45,21 +45,20 @@
 
     <div class="wrapper m-4">
 
+        <!-- Titel -->
         <h1 class="my-5">Happy Börse 2 U</h1>
 
+        <!-- Suche -->
         <div class="mb-3 row">
             <label for="exampleDataList" class="col-sm-3 col-form-label">Suche nach einer Aktie <!--symbols or companies--></label>
             <div class="col-sm-8">
                 <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
                 <datalist id="datalistOptions">
-                    <!-- <option value="San Francisco">
-                    <option value="New York">
-                    <option value="Seattle">
-                    <option value="Los Angeles">
-                    <option value="Chicago"> -->
                 </datalist>
             </div>
         </div>
+
+        <!-- Weiteres (Diagramme, etc.) -->
 
     </div>
 
@@ -89,17 +88,24 @@
                     url: searchStringCompanies, 
                     success: function(data) {
 
-                        console.log(data);
+                        // console.log(data);
 
                         if(data['bestMatches']) {
 
+                            // for(var x = 0; x < data['bestMatches'].length; x++) {
+                            //     let item = data['bestMatches'].to;
+                            //     console.log(item);
+                            //     $("#datalistOptions").append('<option class="searchResultItem" value="' + item['1. symbol'] + " // " + item['2. name'] + '">');
+                            // }
+
+                            console.log(data['bestMatches']);
+
                             data['bestMatches'].forEach(function(item) {
                                 
-                                console.log(item);
-
-                                console.log(item['2. name'] + " // " + item['1. symbol']);
+                                // console.log(item);
+                                //console.log(item['2. name'] + " // " + item['1. symbol']);
+                                
                                 $("#datalistOptions").append('<option class="searchResultItem" value="' + item['1. symbol'] + " // " + item['2. name'] + '">');
-                            
 
                             });
 
@@ -114,7 +120,7 @@
                     complete: function(data) {
                         enableSearchInput(true);
                     },
-                    dataType: "json"
+                    dataType: "json",
                 });
 
             }
@@ -134,9 +140,9 @@
             /*close all autocomplete lists in the document,
             except the one passed as an argument:*/
             var x = document.getElementsByClassName("searchResultItem");
-            console.log("HIER  " + x);
             for (var i = 0; i < x.length; i++) {
-                x[i].parentNode.removeChild(x[i]);
+                //x[i].parentNode.removeChild(x[i]);
+                x[i].remove();
             }
         }
 
