@@ -65,8 +65,7 @@
         </div>
 
         <!-- Diagramm -->
-        <div>
-            <canvas id="myChart"></canvas>
+        <div id="diagrams">
         </div>
 
     </div>
@@ -161,10 +160,11 @@
             if($('#exampleDataList').val() != '') {
 
                 $.ajax({
-                    type:"GET", 
+                    type:"GET",
                     url: "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + $('#exampleDataList').val() + "&apikey=" + apiKey, 
                     beforeSend: function(){
                         $('#symbolDetails').empty();
+                        $('#diagrams').empty();
                     },
                     success: function(data) {
 
@@ -221,6 +221,15 @@
 
         });
 
+        // reverse data
+        labels.reverse();
+        openData.reverse();
+        highData.reverse();
+        lowData.reverse();
+        closeData.reverse();
+        volumeData.reverse();
+
+        // log data
         console.log(labels);
         console.log(openData);
         console.log(highData);
@@ -229,7 +238,6 @@
         console.log(volumeData);
 
         const data = {
-            labels: labels,
             // datasets: [{
             //     label: 'My First dataset',
             //     backgroundColor: 'rgb(255, 99, 132)',
@@ -239,12 +247,15 @@
             // datasets: [{
             //     data: rueckgabeAPI
             // }]
+            labels: labels,
             datasets: [
-            {
+                {
                     label: 'open',
                     data: openData,
+                    fill: false,
+                    yAxisID: 'y',
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 99, 132, 0.6)',
                         // 'rgba(54, 162, 235, 0.2)',
                         // 'rgba(255, 206, 86, 0.2)',
                         // 'rgba(75, 192, 192, 0.2)',
@@ -255,8 +266,10 @@
                 {
                     label: 'high',
                     data: highData,
+                    fill: false,
+                    yAxisID: 'y',
                     backgroundColor: [
-                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(54, 162, 235, 0.6)',
                         // 'rgba(255, 206, 86, 0.2)',
                         // 'rgba(75, 192, 192, 0.2)',
                         // 'rgba(153, 102, 255, 0.2)',
@@ -266,8 +279,10 @@
                 {
                     label: 'low',
                     data: lowData,
+                    fill: false,
+                    yAxisID: 'y',
                     backgroundColor: [
-                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(255, 206, 86, 0.6)',
                         // 'rgba(75, 192, 192, 0.2)',
                         // 'rgba(153, 102, 255, 0.2)',
                         // 'rgba(255, 159, 64, 0.2)'
@@ -276,9 +291,22 @@
                 {
                     label: 'close',
                     data: closeData,
+                    fill: false,
+                    yAxisID: 'y',
                     backgroundColor: [
-                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.6)',
                         // 'rgba(153, 102, 255, 0.2)',
+                        // 'rgba(255, 159, 64, 0.2)'
+                    ],
+                },
+                {
+                    label: 'volume',
+                    data: volumeData,
+                    fill: true,
+                    yAxisID: 'y1',
+                    type: 'bar',
+                    backgroundColor: [
+                        'rgba(153, 102, 255, 0.6)',
                         // 'rgba(255, 159, 64, 0.2)'
                     ],
                 },
@@ -294,21 +322,40 @@
                 scales: {
                     x: {
                         // stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Datum'
+                        },
                     },
                     y: {
                         // stacked: true
+                        title: {
+                            display: true,
+                            text: 'täglicher Wert'
+                        },
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Volume'
+                        },
+                        // grid line settings
+                        grid: {
+                            drawOnChartArea: false, // only want the grid lines for one axis to show up
+                        },
                     }
                 },
             }
         };
-
-        myChart = null;
         
-        if(myChart != null) {
-            
-            myChart.destroy();
+        $('#diagrams').html('<canvas id="myChart"></canvas>');
 
-        }
+        // if(typeof myChart !== 'undefined') {
+        //     myChart.destroy();
+        // }
 
         myChart = new Chart(
             document.getElementById('myChart'),
