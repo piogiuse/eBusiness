@@ -4,25 +4,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Börse 2 U</title>
+    <title>💸 Happy Börse 2 U</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
     
     <!-- Header Anfang -->
-    <header class="p-3 bg-dark text-white" style="display: none;">
+    <header class="p-3 bg-dark text-white">
         <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-            <strong>Happy Börse 2 U</strong>
+            <a href="" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                <strong>💸 Happy Börse 2 U</strong>
             </a>
     
             <ul class="nav col-12 col-lg-auto me-lg-auto ms-4 mb-2 justify-content-center mb-md-0">
-            <li><a href="" class="nav-link px-2 text-white">Home</a></li>
+             <li class="px-2 text-secondary">Studentenprojekt</li>
             <!-- <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
             <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
             <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
@@ -37,33 +38,44 @@
             <button type="button" class="btn btn-outline-light me-2">Login</button>
             <button type="button" class="btn btn-warning">Sign-up</button>
             </div> -->
-
         </div>
         </div>
     </header>
     <!-- Header Ende -->
 
+    <!-- Main Page Anfang -->
     <div class="wrapper m-4">
 
         <!-- Titel -->
-        <h1 class="my-5">Happy Börse 2 U</h1>
+        <!-- <h1 class="my-5">😊 Herzlich Willkommen</h1> -->
 
         <!-- Suche -->
         <div class="mb-3 row">
-            <label for="exampleDataList" class="col-sm-3 col-form-label">Suche nach einer Aktie <!--symbols or companies--></label>
+            <label for="exampleDataList" class="col-sm-3 col-form-label">🕵🏻 Suche nach einer Aktie <!--symbols or companies--></label>
             <div class="col-sm-8">
-                <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
+                <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Schreibe zum suchen...">
                 <datalist id="datalistOptions">
                 </datalist>
+                <button type="button" onClick="loadSymbolData();" class="btn btn-primary my-4" style="width: 250px;">🧾 Details anzeigen</button>
             </div>
         </div>
 
-        <!-- Weiteres (Diagramme, etc.) -->
+        <!-- Informationen zum Symbol -->
+        <div id="symbolDetails">
+        </div>
+
+        <!-- Diagramm -->
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
 
     </div>
+    <!-- Main Page Ende -->
 
 
     <script>
+
+        // createChart();
 
         apiKey ='QQQLXZK291FP2Z1O'; // Max
         //apiKey ='NPQAZZM6L5260BY2'; // Falk
@@ -83,6 +95,7 @@
                     type:"GET", 
                     url: "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=" + $('#exampleDataList').val() + "&apikey=" + apiKey,
                     beforeSend: function(){
+                        removeAllItemsFromSearchList();
                     },
                     success: function(data) {
 
@@ -111,6 +124,7 @@
                     },
                     complete: function(data) {
                         //enableSearchInput(true);
+                        // alert($("#datalistOptions option:selected").text());
                     },
                     dataType: "json",
                 });
@@ -140,25 +154,169 @@
             $('#datalistOptions').empty();
         }
 
-        function loadSymbolData(symbol) {
+        function loadSymbolData() {
 
-            alert(symbol);
+            // alert($('#exampleDataList').val());
+
+            if($('#exampleDataList').val() != '') {
+
+                $.ajax({
+                    type:"GET", 
+                    url: "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + $('#exampleDataList').val() + "&apikey=" + apiKey, 
+                    beforeSend: function(){
+                        $('#symbolDetails').empty();
+                    },
+                    success: function(data) {
+
+                        if(data['Meta Data']) {
+
+                            console.log(data);
+
+                            metadata = data['Meta Data'];
+                            $("#symbolDetails").append('<div class="card" style=""><div class="card-body"><div style="float:left;"><h5 class="card-title">📉 ' + metadata['2. Symbol'] + '</h5><h6 class="card-subtitle mb-2 text-muted">ℹ️ ' + metadata['1. Information'] + '</h6></div><div style="float:right;"><h6>Aktualisiert <span class="badge bg-secondary">' + metadata['3. Last Refreshed'] + '</span></h6><h6>Zeitzone <span class="badge bg-secondary">' + metadata['5. Time Zone'] + '</span></h6></div></div></div>');
+                            
+                            timeSeries = data['Time Series (Daily)'];
+                            createChart(timeSeries);
+                            
+                            // createChart(data);
+
+                        } else {
+                            alert(JSON.stringify(data));
+                        }
+                        
+                    }, 
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert(jqXHR.status);
+                    },
+                    complete: function(data) {
+                        
+                    },
+                    dataType: "json"
+                });
+
+            } else {
+
+                $("#symbolDetails").html('<div class="alert alert-danger" role="alert">Du musst zuerst nach einer Aktie suchen!</div>');
+
+            }
+            
+        }
+
+    function createChart(rueckgabeAPI) {
+
+        console.log(rueckgabeAPI);
+
+        // Split timestamp and data into separate arrays
+        var labels = [], openData=[], highData=[], lowData=[], closeData=[], volumeData=[];
+
+        // https://stackoverflow.com/questions/1078118/how-do-i-iterate-over-a-json-structure
+        jQuery.each(rueckgabeAPI, function(index, value) {
+
+            labels.push(index);
+            openData.push(parseFloat(value["1. open"]));
+            highData.push(parseFloat(value["2. high"]));
+            lowData.push(parseFloat(value["3. low"]));
+            closeData.push(parseFloat(value["4. close"]));
+            volumeData.push(parseFloat(value["5. volume"]));
+
+        });
+
+        console.log(labels);
+        console.log(openData);
+        console.log(highData);
+        console.log(lowData);
+        console.log(closeData);
+        console.log(volumeData);
+
+        const data = {
+            labels: labels,
+            // datasets: [{
+            //     label: 'My First dataset',
+            //     backgroundColor: 'rgb(255, 99, 132)',
+            //     borderColor: 'rgb(255, 99, 132)',
+            //     data: [0, 10, 5, 2, 20, 30, 45],
+            // }],
+            // datasets: [{
+            //     data: rueckgabeAPI
+            // }]
+            datasets: [
+            {
+                    label: 'open',
+                    data: openData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        // 'rgba(54, 162, 235, 0.2)',
+                        // 'rgba(255, 206, 86, 0.2)',
+                        // 'rgba(75, 192, 192, 0.2)',
+                        // 'rgba(153, 102, 255, 0.2)',
+                        // 'rgba(255, 159, 64, 0.2)'
+                    ],
+                },
+                {
+                    label: 'high',
+                    data: highData,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.2)',
+                        // 'rgba(255, 206, 86, 0.2)',
+                        // 'rgba(75, 192, 192, 0.2)',
+                        // 'rgba(153, 102, 255, 0.2)',
+                        // 'rgba(255, 159, 64, 0.2)'
+                    ],
+                },
+                {
+                    label: 'low',
+                    data: lowData,
+                    backgroundColor: [
+                        'rgba(255, 206, 86, 0.2)',
+                        // 'rgba(75, 192, 192, 0.2)',
+                        // 'rgba(153, 102, 255, 0.2)',
+                        // 'rgba(255, 159, 64, 0.2)'
+                    ],
+                },
+                {
+                    label: 'close',
+                    data: closeData,
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        // 'rgba(153, 102, 255, 0.2)',
+                        // 'rgba(255, 159, 64, 0.2)'
+                    ],
+                },
+            ]
+        
+        };
+
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        // stacked: true,
+                    },
+                    y: {
+                        // stacked: true
+                    }
+                },
+            }
+        };
+
+        myChart = null;
+        
+        if(myChart != null) {
+            
+            myChart.destroy();
 
         }
 
-        // $.ajax({
-        //     type:"GET", 
-        //     url: "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=" + apiKey, 
-        //     success: function(data) {
-        //             $("body").append(JSON.stringify(data));
-        //             console.log(data);
-        //             console.log(data['Meta Data']);
-        //         }, 
-        //     error: function(jqXHR, textStatus, errorThrown) {
-        //             alert(jqXHR.status);
-        //         },
-        //     dataType: "json"
-        // });
+        myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
+
+    }
+
 
     </script>
     
