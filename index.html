@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 
 <head>
     <meta charset="UTF-8">
@@ -43,6 +43,13 @@
             <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
             </form> -->
 
+                <div class="text-end">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop">
+                        ℹ️ Info
+                    </button>
+                </div>
                 <!-- <div class="text-end">
             <button type="button" class="btn btn-outline-light me-2">Login</button>
             <button type="button" class="btn btn-warning">Sign-up</button>
@@ -404,7 +411,15 @@
                             href="https://github.com/italyboy2012/eBusiness"
                             target="_blank">https://github.com/italyboy2012/eBusiness</a> eingesehen werden.
                     </div>
-                    <iframe src="Disclaimer-hb2u.pdf#toolbar=0" style="width: 100%; min-height: 55vh"></iframe>
+
+                    <!-- <iframe src="Disclaimer-hb2u.pdf#toolbar=0" style="width: 100%; min-height: 55vh"></iframe> -->
+
+                    <object data="Disclaimer-hb2u.pdf#toolbar=0" type="application/pdf"
+                        style="min-height:100vh;width:100%;border:1px solid black;">
+                        <p>It appears you don't have a PDF plugin for this browser.
+                            No biggie... you can <a href="Disclaimer-hb2u.pdf" target="_blank">click here to
+                                download the PDF file.</a></p>
+                    </object>
                 </div>
                 <div class="modal-footer">
                     <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
